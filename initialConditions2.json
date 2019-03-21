@@ -1,0 +1,7 @@
+{"FEA":
+	{
+	"nodes":[[0,0],[1,0]],
+	"elements":{"node_connections":[[0,1]],"E":[1,1],"A":[1,1]},
+	"initial_conds":{"displacement": [[0,0],[1,1]],"force": [[0,0],[1,0]]}
+	}
+}
