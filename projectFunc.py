@@ -7,15 +7,23 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 #----------------------------------------------------------------------------------------------------------------------#
+def transformForce(force_list):
+    transformed_forces = []
 
-def flattenList(list):
-    # Required to merge 2D lists created in JSON file into a 1D list
-    flattened = []
-    for node in list:
-        for point in node:
-            flattened.append(point)
-    return flattened
+    for node_force in force_list:
+        angle = node_force[1]*3.14159/180
+        force = []
+        force_x = node_force[0]*math.cos(angle)
+        force_y = node_force[0]*math.sin(angle)
+        force.append(force_x)
+        force.append(force_y)
+        transformed_forces.append(force)
 
+    return transformed_forces
+
+def diaToArea(diameter):
+    area = pow(diameter,2)*3.14159/4
+    return area
 
 def augmentMatrix(elements,num_nodes):
     # Function takes the list of element objects and the number of nodes in system
@@ -90,6 +98,13 @@ def combineAugmented(elementList):
 
     return global_k
 
+def flattenList(list):
+    # Required to merge 2D lists created in JSON file into a 1D list
+    flattened = []
+    for node in list:
+        for point in node:
+            flattened.append(point)
+    return flattened
 
 def trimMatrix(initial_disp,matrix,vector=False):
     # Condenses input matrix by removing rows and columns corresponding to 0 entries of the initial displacement vector
@@ -116,7 +131,6 @@ def trimMatrix(initial_disp,matrix,vector=False):
         matrix = np.delete(matrix, to_delete, 1)
 
     return matrix
-
 
 def recompileMatrix(initial_disp,result_vector):
     #Re-introduces previously deleted 0 entries of initial_disp vector into the final_disp vector
@@ -287,7 +301,7 @@ def plotTruss(node_list,element_list,i_disp,i_force):
             force_y.append(y)
 
         #Calculate the netforce of the vector, if non-zero then plot
-        net_force = pow(pow(force[0],2) + pow(force[1],2),0.5)
+        net_force = math.ceil(pow(pow(force[0],2) + pow(force[1],2),0.5))
         if net_force > 0:
             plt.plot(force_x, force_y, linewidth='5', linestyle='--', marker="P", markersize='15', markevery=[1])
             #Annotate the net force of the vector at the end point of the force

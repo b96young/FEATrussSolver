@@ -6,7 +6,7 @@
 import numpy as np
 #----------------------------------------------------------------------------------------------------------------------#
 
-#Create beam class to hold all element parameters
+#Create object to hold all element parameters
 class Element():
     def stiff_matrix_calc(self):
         #Calculates the individual stiffness matrices in global coordinates
