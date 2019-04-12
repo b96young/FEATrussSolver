@@ -22,6 +22,7 @@ class Element():
             [-pow(l, 2), -l * m, pow(l, 2), l * m], \
             [-l * m, -pow(m, 2), l * m, pow(m, 2)]]))
 
+        self.strain_matrix = np.array([-l, -m, l, m])
         self.stress_matrix = np.multiply(self.E/self.length, np.array([-l, -m, l, m]))
 
     def element_midpoint(self):

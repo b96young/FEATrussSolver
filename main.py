@@ -69,9 +69,16 @@ final_displacement = recompileMatrix(initial_displacement,result_vector)
 #Call {printTable in projectFunc.py} to print out the final displacements to console
 printTable("disp",final_displacement)
 
+calc_strains = calcStrain(elements,final_displacement)
+printTable("strain",calc_strains)
+
 #Calculate stresses, then print to console {calcStress in projectFunc.py}
 calc_stresses = calcStress(elements,final_displacement)
 printTable("stress",calc_stresses)
+
+#Calculate forces in the elements
+element_forces = calcElementForces(calc_stresses,D)
+printTable("e_force",element_forces)
 
 #Calculate reaction forces, print to console {reactionForces in projectFunc.py}
 react_forces = reactionForces(globalStiffnessMatrix,final_displacement)

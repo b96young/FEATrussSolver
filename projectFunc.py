@@ -27,19 +27,15 @@ def diaToArea(diameter):
 
 def augmentMatrix(elements,num_nodes):
     # Function takes the list of element objects and the number of nodes in system
-
     # Need to double shape of matrix since going from u -> u,v
     augmented_m = np.zeros((num_nodes * 2, num_nodes * 2))
-
     # Function separates the four quadrants of the individual stiffness matrix, moves them into augmented matrix
-    # Detailed explanation in documentation
     # Quadrant labeling system:
     # [1,1,3,3]
     # [1,1,3,3]
     # [2,2,4,4]
     # [2,2,4,4]
     # Python slicing notation: (top:bottom, left:right)
-
     # Reposition first quadrant
     first_quad = elements.stiff_matrix[0:2, 0:2]
     # need to multiply the node index by 2, since transforming from u -> u,v
@@ -151,6 +147,25 @@ def recompileMatrix(initial_disp,result_vector):
 
     return output
 
+def calcStrain(elements,disp_vector):
+    element_strain = []
+    for element in elements:
+        disp = []
+        # Get order of nodes in element
+        start_node = element.connecting_nodes[0] * 2
+        end_node = element.connecting_nodes[1] * 2
+
+        # Slice the corresponding displacements of each node from the displacement vector
+        # Extend method appends each entry in the list (as opposed to appending the list)
+        disp.extend(disp_vector[start_node:start_node + 2])
+        disp.extend(disp_vector[end_node:end_node + 2])
+
+        # Perform the dot product of the transformation matrix and the resulting displacements
+        # to find deflection in local coordinate system
+        local_deflection = np.dot(element.strain_matrix, disp)
+        element_strain.append(local_deflection/element.length)
+
+    return element_strain
 
 def calcStress(elements,disp_vector):
     #Input a list of elements and the final_disp vector, return stress in each element
@@ -174,6 +189,13 @@ def calcStress(elements,disp_vector):
 
     return stress
 
+def calcElementForces(stresses,diameters):
+
+    element_forces = []
+    for i in range(0,len(stresses)):
+        force = stresses[i] * diaToArea(diameters[i])
+        element_forces.append(force)
+    return element_forces
 
 def reactionForces(global_stiffness,disp_vector):
     #Find the reaction forces at each boundary given the global stiffness matrix and the displacement vector
@@ -219,8 +241,20 @@ def printTable(name,vector):
                 print("v%d" % (i/2), " : ", vector[i])
         print("\n")
 
+    if name == "strain":
+        print("Strains")
+        for i in range(0,len(vector)):
+            print("Element %d" %i, " : ", vector[i])
+        print("\n")
+
     if name == "stress":
         print("Stresses")
+        for i in range(0,len(vector)):
+            print("Element %d" %i, " : ", vector[i])
+        print("\n")
+
+    if name == "e_force":
+        print("Element Forces")
         for i in range(0,len(vector)):
             print("Element %d" %i, " : ", vector[i])
         print("\n")
@@ -269,6 +303,7 @@ def plotTruss(node_list,element_list,i_disp,i_force):
 
         #Get the x,y components of the force at the i'th node
         force = i_force[i]
+        print(force)
         #Create lists to hold the start and end points of the force vector
         force_x = []
         force_y = []
@@ -282,7 +317,7 @@ def plotTruss(node_list,element_list,i_disp,i_force):
         if abs(force[0] + force[1]) > 0 :
             if force[0] > 1:
                 force_x.append(math.log(force[0]) + x)
-            elif force[1] < 1:
+            elif force[0] < -1:
                 force_x.append(-1*math.log(-1*force[0]) + x)
             else:
                 force_x.append(force[0] + x)

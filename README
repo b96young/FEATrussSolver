@@ -6,9 +6,6 @@ Required dependencies:
 python -m pip install matplotlib (installs matplotlib + numpy)
 
 Instructions:
-
-UNITS ARE ASSUMED STANDARD (N,m,Pa) or (lbf,in,psi)
-
 1. Open existing .json file
 
 2. Under "nodes" change the lists to correspond with the appropriate coordinates of the nodes
@@ -21,7 +18,7 @@ UNITS ARE ASSUMED STANDARD (N,m,Pa) or (lbf,in,psi)
    The start and end node values correspond to the location in the list created above
    ie. [[0,1],...] -> element 1: start_node is node 0, end_node is node 1
 
-4. Fill in the E (Young's Modulus) and D (Diameter) lists, each entry in list corresponds to the element
+4. Fill in the E and A lists, each entry in list corresponds to the element
    ie. "E": [1000,500,...] -> element_0_E = 1000, element_1_E = 500
 
 5. Set boundary conditions in "displacement" and "force" lists
@@ -30,23 +27,28 @@ UNITS ARE ASSUMED STANDARD (N,m,Pa) or (lbf,in,psi)
    boundary condition. If the value is non-zero, the solver will calculate a resultant displacement.
    ie. [[0,0],[1,0],...] -> node0 is fixed in x and y, node1 is fixed in y, can move in x
    The force list works the same way, a force of 0 will be ignored by the solver.
-   ie. [[2000,-120],[0,0],...] -> node0 has a force of 2000 acting along a line at -120 degrees
+   ie. [[0,-1000],[0,0],...] -> node0 has no force in x direction but a value of 1000 in the negative y direction
+                                node1 has no force in either direction
 
 6. In file: 492 Final Project.py change "file" variable to name of appropriate JSON file
 
 7. Run 492 Final Project.py
 
-8. Matplotlib chart of analyzed truss is generated
+9. Matplotlib chart of analyzed truss is generated
    Items to note:
    1. Elements are drawn as lines, element numbering is labelled
    2. Nodes are labelled at intersection of nodes
    3. Boundary conditions are generated as circles and triangles:
-      - Circles indicate a fixed point in both x and y
-      - Vertical triangles (point facing up) indicate pinned roller fixed in y direction, can translate in x
-      - Horizontal triangles (point facing right) indicate pinned roller fixed in x direction, can translate in y
+      Circles indicate a fixed point in both x and y
+      Vertical triangles (point facing up) indicate pinned roller fixed in y direction, can translate in x
+      Horizontal triangles (point facing right) indicate pinned roller fixed in x direction, can translate in y
    4. Force vectors are displayed as dotted lines with a cross at the end point, annotated with the net force at
       the end point
 
-9. Solution of displacements, stresses, and reaction forces are printed in the console
+8. Solution of displacements, stresses, and reaction forces are printed in the console
 
+
+
+LOCAL COORDINATE SYSTEM (x,y denoted by u_prime, v_prime)
+LOCAL TO GLOBAL TRANSFORMATION k = T_tranpose*k_prime*T
 
